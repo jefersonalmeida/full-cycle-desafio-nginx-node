@@ -2,13 +2,16 @@ version: '3'
 
 services: 
     app:
-        build: 
+        build:
             context: ./app
+            dockerfile: Dockerfile
         container_name: app
+        command: npm start
         networks: 
             - node-network
         volumes: 
-            - ./app/:/usr/src/app
+            - ./app:/usr/app
+            - /usr/app/node_modules
         tty: true
         ports: 
             - "3000:3000"
@@ -23,7 +26,10 @@ services:
         networks: 
             - node-network
         ports:
-            - "8080:80"
+            - "8080:80"      
+        depends_on: 
+            - app
+            - db
 
     db:
         build: 
@@ -33,8 +39,13 @@ services:
         container_name: db
         restart: always
         tty: true
+        ports:
+            - "3306:3306"
         volumes: 
             - ./mysql/data:/var/lib/mysql
+        environment: 
+            - MYSQL_DATABASE=node_db
+            - MYSQL_ROOT_PASSWORD=root
         networks: 
             - node-network
 

@@ -1,8 +1,3 @@
 FROM mysql:5.7.15
 
-ENV MYSQL_DATABASE=node_db \
-    MYSQL_ROOT_PASSWORD=root
-
-ADD ./init.sql /docker-entrypoint-initdb.d
-
-EXPOSE 3306
+ADD init.sql /docker-entrypoint-initdb.d

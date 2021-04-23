@@ -9,22 +9,27 @@ const config = {
 };
 
 const mysql = require('mysql');
-const connection = mysql.createConnection(config);
-
-let sql = `insert into peoples(name) values('Jeferson Almeida');`;
-connection.query(sql);
-
-sql = "select * from peoples";
-let result = null;
-connection.query(sql, (err, data) => result = data);
-connection.end();
 
 app.get('/', (req, res) => {
-    let li = '';
-    result.forEach(element => {
-        li += `<li>Nome: ${element.name}</li>`;
-    });
 
-    res.send(`<h1>Full Cycle Rocks!</h1><ul>${li}</ul>`);
-})
+    const connection = mysql.createConnection(config);
+    connection.query(`insert into peoples(name) values('Jeferson Almeida');`);
+
+    let ul = '';
+    let li = '';
+
+    const result = connection.query("select * from peoples", (err, data) => {
+        console.log(data);
+        if (data && data.length) {
+            data.map(element => {
+                li += `<li>${element.id} - ${element.name}</li>`;
+            });
+            ul = `<ul>${li}</ul>`;
+        }
+        res.send(`<h1>Full Cycle Rocks!</h1>${ul}`);
+    });
+    connection.end();
+
+});
+
 app.listen(port, () => console.log(`Rodando na porta ${port}`));
